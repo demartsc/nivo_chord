@@ -7,10 +7,18 @@ class App extends Component {
     super(props);
 
     this.state = {
+      isLoading: true,
+      selectedSheet: undefined,
+      sheetNames: [],
+      rows: [],
+      headers: [],
+      dataKey: 1,
+      filteredFields: [],
+      dashboardName: ''
     };
 
     //this.updateData = this.updateData.bind(this);
-    this.data =
+    this.defaultData =
     [
       [
         64,
@@ -50,11 +58,42 @@ class App extends Component {
     ];
   }
 
+/*
+  componentWillMount () {
+    getTableau.then(() => {
+      const selectedSheet = tableau.extensions.settings.get('sheet');
+      const sheetNames = tableau.extensions.dashboardContent.dashboard.worksheets.map(worksheet => worksheet.name);
+      const dashboardName = tableau.extensions.dashboardContent.dashboard.name;
+      const sheetSelected = !!selectedSheet;
+      this.setState({
+        isLoading: sheetSelected,
+        selectedSheet: selectedSheet,
+        sheetNames: sheetNames,
+        dashboardName: dashboardName
+      });
+
+      if (sheetSelected) {
+        this.loadSelectedMarks();
+      }
+    });
+  }
+
+  getTableau = () => {
+   return window.top.tableau || parent.parent.tableau;
+};
+  getSelectedSheet (selectedSheet) {
+    const sheetName = selectedSheet || this.state.selectedSheet;
+    return tableau.extensions.dashboardContent.dashboard.worksheets.find(worksheet => worksheet.name === sheetName);
+  }
+
+
+*/
+
   render() {
     return (
       <div className="App">
        <Chord
-              matrix={this.data}
+              matrix={this.data || this.defaultData}
               keys={[
                   "John",
                   "Raoul",
