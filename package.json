@@ -2,6 +2,7 @@
   "name": "nivo_chord",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://demartsc.github.io/nivo_chord",
   "dependencies": {
     "nivo": "^0.30.0",
     "nivo-generators": "^0.9.3",
