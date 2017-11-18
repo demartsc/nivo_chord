@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 import Tableau from 'tableau-api';
-import TableauChord from './nivo_chord.js';
 
 
 class App extends Component {
@@ -74,9 +73,6 @@ class App extends Component {
             style={{ margin: '0 auto' }}
           />
         </div>
-      <div style={{height:300, width:300}}>
-        <TableauChord />
-      </div>
       </div>
     );
   }
