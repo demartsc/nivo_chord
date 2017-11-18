@@ -1,138 +1,82 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Chord } from 'nivo';
+import Tableau from 'tableau-api';
+import TableauChord from './nivo_chord.js';
+
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isLoading: true,
-      selectedSheet: undefined,
-      sheetNames: [],
-      rows: [],
-      headers: [],
-      dataKey: 1,
-      filteredFields: [],
-      dashboardName: ''
+      url:"https://public.tableau.com/views/NivoChordIntegration/Dashboard2?:embed=y&:display_count=yes"
     };
 
-    //this.updateData = this.updateData.bind(this);
-    this.defaultData =
-    [
-      [
-        64,
-        331,
-        491,
-        77,
-        202
-      ],
-      [
-        1775,
-        440,
-        944,
-        1052,
-        154
-      ],
-      [
-        18,
-        397,
-        404,
-        42,
-        125
-      ],
-      [
-        374,
-        415,
-        494,
-        242,
-        790
-      ],
-      [
-        1363,
-        376,
-        627,
-        319,
-        98
-      ]
-    ];
+    this.initTableau = this.initTableau.bind(this);
+
+    this.width = 800; // default, although this gets overwritten in the initTableau function
+    this.height = 800; // default, although this gets overwritten in the initTableau function
   }
+  
+  initTableau() {
+    const vizURL = this.state.url;
+    const options = {
+      hideTabs: true,
+      width: this.width,
+      height: this.height,
+      onFirstInteractive: () => {
+        const wrkbk = viz.getWorkbook();
+        const activeSheet = viz.getWorkbook().getActiveSheet();
+        const sheets = activeSheet.getWorksheets();
+        const name = wrkbk.getName();
+        const objs = activeSheet.getObjects();
+        const pubSheets = wrkbk.getPublishedSheetsInfo();
+        //console.log(objs);
+        const filters = [];
+        //console.log(sheets);
 
-/*
-  componentWillMount () {
-    getTableau.then(() => {
-      const selectedSheet = tableau.extensions.settings.get('sheet');
-      const sheetNames = tableau.extensions.dashboardContent.dashboard.worksheets.map(worksheet => worksheet.name);
-      const dashboardName = tableau.extensions.dashboardContent.dashboard.name;
-      const sheetSelected = !!selectedSheet;
-      this.setState({
-        isLoading: sheetSelected,
-        selectedSheet: selectedSheet,
-        sheetNames: sheetNames,
-        dashboardName: dashboardName
-      });
+        // need to check what happens with automatic sized workbooks...
+        //console.log(activeSheet.getSize());
+        if (activeSheet.getSize().maxSize) {
+          this.width = activeSheet.getSize().maxSize.width;
+          this.height = activeSheet.getSize().maxSize.height;
+        } else {
+          this.width = 800;
+          this.height = 800;
+        }
 
-      if (sheetSelected) {
-        this.loadSelectedMarks();
+        // this will set the frame size the maximum allowed by the viz
+        // need to vet whether this will be a problem with automatic vizzes however
+        // see note herein for dashboards as well...
+        // https://onlinehelp.tableau.com/current/api/js_api/en-us/JavaScriptAPI/js_api_sample_resize.html
+        viz.setFrameSize(this.width, this.height + 100);
       }
-    });
+    };
+
+    //initiate the viz
+    let viz = new Tableau.Viz(this.container, vizURL, options);
+
   }
 
-  getTableau = () => {
-   return window.top.tableau || parent.parent.tableau;
-};
-  getSelectedSheet (selectedSheet) {
-    const sheetName = selectedSheet || this.state.selectedSheet;
-    return tableau.extensions.dashboardContent.dashboard.worksheets.find(worksheet => worksheet.name === sheetName);
+  componentDidMount() {
+    this.initTableau(); // we are just using state, so don't need to pass anything
   }
-
-
-*/
 
   render() {
+    console.log(window.top.tableau);
     return (
       <div className="App">
-       <Chord
-              matrix={this.data || this.defaultData}
-              keys={[
-                  "John",
-                  "Raoul",
-                  "Jane",
-                  "Marcel",
-                  "Ibrahim"
-              ]}
-              margin={{
-                  "top": 60,
-                  "right": 60,
-                  "bottom": 60,
-                  "left": 60
-              }}
-              width={600}
-              height={600}
-              padAngle={0.02}
-              innerRadiusRatio={0.96}
-              innerRadiusOffset={0.02}
-              arcOpacity={1}
-              arcBorderWidth={1}
-              arcBorderColor="inherit:darker(0.4)"
-              ribbonOpacity={0.5}
-              ribbonBorderWidth={1}
-              ribbonBorderColor="inherit:darker(0.4)"
-              enableLabel={true}
-              label="id"
-              labelOffset={12}
-              labelRotation={0}
-              labelTextColor="inherit:darker(1)"
-              colors="nivo"
-              isInteractive={true}
-              arcHoverOpacity={1}
-              arcHoverOthersOpacity={0.25}
-              ribbonHoverOpacity={0.75}
-              ribbonHoverOthersOpacity={0.25}
-              animate={true}
-              motionStiffness={90}
-              motionDamping={7}
+        <div className="tabithaRootDiv">
+          <div
+            id="tableauViz"
+            className="tableauContainer"
+            ref={c => (this.container = c)}
+            style={{ margin: '0 auto' }}
           />
+        </div>
+      <div style={{height:300, width:300}}>
+        <TableauChord />
+      </div>
       </div>
     );
   }

@@ -2,14 +2,19 @@
   "name": "nivo_chord",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://demartsc.github.io/nivo_chord",
   "dependencies": {
+    "gh-pages": "^1.0.0",
     "nivo": "^0.30.0",
     "nivo-generators": "^0.9.3",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
-    "react-scripts": "1.0.17"
+    "react-scripts": "1.0.17",
+    "tableau-react": "^1.0.2"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
