@@ -22,11 +22,11 @@ function getUrlVars() {
 var urlParams = getUrlVars();
 
 switch (urlParams["startPage"]) {
-  case "Chord":
+  case undefined:
     ReactDOM.render(<TableauChord />, document.getElementById('root'));
     break;
 
-  case undefined:
+  case "Tableau":
   default:
     ReactDOM.render(<App />, document.getElementById('root'));
     break;
