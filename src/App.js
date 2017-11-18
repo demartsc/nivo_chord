@@ -17,6 +17,9 @@ class App extends Component {
 
     this.width = 800; // default, although this gets overwritten in the initTableau function
     this.height = 800; // default, although this gets overwritten in the initTableau function
+
+    this.viz = {};
+
   }
   
   initTableau() {
@@ -26,8 +29,8 @@ class App extends Component {
       width: this.width,
       height: this.height,
       onFirstInteractive: () => {
-        const wrkbk = viz.getWorkbook();
-        const activeSheet = viz.getWorkbook().getActiveSheet();
+        const wrkbk = this.viz.getWorkbook();
+        const activeSheet = this.viz.getWorkbook().getActiveSheet();
         const sheets = activeSheet.getWorksheets();
         const name = wrkbk.getName();
         const objs = activeSheet.getObjects();
@@ -50,7 +53,7 @@ class App extends Component {
         // need to vet whether this will be a problem with automatic vizzes however
         // see note herein for dashboards as well...
         // https://onlinehelp.tableau.com/current/api/js_api/en-us/JavaScriptAPI/js_api_sample_resize.html
-        viz.setFrameSize(this.width, this.height + 100);
+        this.viz.setFrameSize(this.width, this.height + 100);
 
         // get data code for react from https://github.com/cmtoomey/TableauReact
         const sheet = sheets.get("Sheet 6");
@@ -59,6 +62,8 @@ class App extends Component {
             ignoreSelection: false,
             includeAllColumns: false
         };
+        console.log(sheet);
+        /* //This does not work with the tableau-react version of the api
         sheet.getSummaryDataAsync(options).then((t) => {
             const tableauData = t.getData();
             console.log(tableauData);
@@ -75,13 +80,14 @@ class App extends Component {
                 data: data
             });
         })
+        */
       }
     };
 
     //initiate the viz
-    let viz = new Tableau.Viz(this.container, vizURL, options);
+    this.viz = new Tableau.Viz(this.container, vizURL, options);
     this.setState({
-        viz:viz
+        viz:this.viz
     })
     console.log(this.state);
   }
