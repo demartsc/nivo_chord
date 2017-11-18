@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import TableauChord from './nivo_chord.js';
+import Tableau from 'tableau-api';
 import registerServiceWorker from './registerServiceWorker';
 
 //ReactDOM.render(<App />, document.getElementById('root'));

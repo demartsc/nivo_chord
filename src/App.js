@@ -62,7 +62,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(window.top.tableau);
+    console.log(window.tableau);
     return (
       <div className="App">
         <div className="tabithaRootDiv">

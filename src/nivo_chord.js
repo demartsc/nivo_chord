@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Chord } from 'nivo';
 import Tableau from 'tableau-api';
 
-
 class TableauChord extends Component {
   constructor(props) {
     super(props);
