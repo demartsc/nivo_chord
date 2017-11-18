@@ -8,7 +8,9 @@ class App extends Component {
     super(props);
 
     this.state = {
-      url:"https://public.tableau.com/views/NivoChordIntegration/Dashboard2?:embed=y&:display_count=yes"
+      url:"https://public.tableau.com/views/NivoChordIntegration/Dashboard2?:embed=y&:display_count=yes", 
+      viz: {},
+      data: {}
     };
 
     this.initTableau = this.initTableau.bind(this);
@@ -49,12 +51,39 @@ class App extends Component {
         // see note herein for dashboards as well...
         // https://onlinehelp.tableau.com/current/api/js_api/en-us/JavaScriptAPI/js_api_sample_resize.html
         viz.setFrameSize(this.width, this.height + 100);
+
+        // get data code for react from https://github.com/cmtoomey/TableauReact
+        const sheet = sheets.get("Sheet 6");
+        const options = {
+            ignoreAliases: false,
+            ignoreSelection: false,
+            includeAllColumns: false
+        };
+        sheet.getSummaryDataAsync(options).then((t) => {
+            const tableauData = t.getData();
+            console.log(tableauData);
+            let data = [];
+            const pointCount = tableauData.length; 
+            for(let a = 0; a < pointCount; a++ ) {
+                data = data.concat({
+                    Out: tableauData[a][0].value,
+                    In: tableauData[a][1].value,
+                    Ct: Math.round(tableauData[a][2].value,0)
+                })
+            };
+            this.setState({
+                data: data
+            });
+        })
       }
     };
 
     //initiate the viz
     let viz = new Tableau.Viz(this.container, vizURL, options);
-
+    this.setState({
+        viz:viz
+    })
+    console.log(this.state);
   }
 
   componentDidMount() {
