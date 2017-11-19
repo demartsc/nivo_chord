@@ -51,7 +51,6 @@ class TableauChord extends Component {
     };
     sheet.getSummaryDataAsync(options).then((t) => {
       const tableauData = t.getData();
-      console.log(tableauData);
       let data = [];
       const pointCount = tableauData.length; 
       for(let a = 0; a < pointCount; a++ ) {
@@ -69,8 +68,6 @@ class TableauChord extends Component {
     })
 
   }
-
-
 
   render() {
     return (
