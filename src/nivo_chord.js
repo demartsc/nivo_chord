@@ -8,51 +8,64 @@ class TableauChord extends Component {
 
     this.state = {
       isLoading: true,
+      viz: {},
+      data: {}
     };
 
     //this.updateData = this.updateData.bind(this);
     this.defaultData =
     [
-      [
-        64,
-        331,
-        491,
-        77,
-        202
-      ],
-      [
-        1775,
-        440,
-        944,
-        1052,
-        154
-      ],
-      [
-        18,
-        397,
-        404,
-        42,
-        125
-      ],
-      [
-        374,
-        415,
-        494,
-        242,
-        790
-      ],
-      [
-        1363,
-        376,
-        627,
-        319,
-        98
-      ]
+      [ 64, 331, 491, 77, 202 ],
+      [ 1775, 440, 944, 1052, 154 ],
+      [ 18, 397, 404, 42, 125 ],
+      [ 374, 415, 494, 242, 790 ],
+      [ 1363, 376, 627, 319, 98 ]
     ];
+
+    this.viz = {};
+    this.workbook = {};
+    this.activeSheet = {};
+    this.sheets = {};
+
   }
 
+  componentDidMount() {
+    this.viz = window.top.tableau.VizManager.getVizs()[0];
+    this.workbook = this.viz.getWorkbook();
+    this.activeSheet = this.workbook.getActiveSheet();
+    this.sheets = this.activeSheet.getWorksheets();
+
+    // get data code for react from https://github.com/cmtoomey/TableauReact
+    const sheet = this.sheets.get("Sheet 6");
+    const options = {
+        ignoreAliases: false,
+        ignoreSelection: false,
+        includeAllColumns: false
+    };
+    sheet.getSummaryDataAsync(options).then((t) => {
+      const tableauData = t.getData();
+      console.log(tableauData);
+      let data = [];
+      const pointCount = tableauData.length; 
+      for(let a = 0; a < pointCount; a++ ) {
+          data = data.concat({
+              Out: tableauData[a][0].value,
+              In: tableauData[a][1].value,
+              Ct: Math.round(tableauData[a][2].value,0)
+          })
+      };
+      console.log(data);
+      this.setState({
+          viz: this.viz,
+          data: data
+      });
+    })
+
+  }
+
+
+
   render() {
-    console.log(window.top.tableau);
     return (
        <div id = "chordDiv">
          <Chord

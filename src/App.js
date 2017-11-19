@@ -62,8 +62,7 @@ class App extends Component {
             ignoreSelection: false,
             includeAllColumns: false
         };
-        console.log(sheet);
-        /* //This does not work with the tableau-react version of the api
+        //console.log(sheet);
         sheet.getSummaryDataAsync(options).then((t) => {
             const tableauData = t.getData();
             console.log(tableauData);
@@ -80,12 +79,13 @@ class App extends Component {
                 data: data
             });
         })
-        */
       }
     };
 
     //initiate the viz
-    this.viz = new Tableau.Viz(this.container, vizURL, options);
+    //console.log(window.tableau.Viz);
+
+    this.viz = new window.tableau.Viz(this.container, vizURL, options);
     this.setState({
         viz:this.viz
     })
@@ -97,7 +97,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(window.tableau);
+    //console.log(window.tableau);
     return (
       <div className="App">
         <div className="tabithaRootDiv">
