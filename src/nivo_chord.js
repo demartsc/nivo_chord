@@ -10,8 +10,8 @@ class TableauChord extends Component {
       isLoading: true,
       viz: {},
       data: {}, 
-      keys: {},
-      matrix: {}
+      keys: [],
+      matrix: []
     };
 
     //this.updateData = this.updateData.bind(this);
@@ -24,16 +24,23 @@ class TableauChord extends Component {
       [ 1363, 376, 627, 319, 98 ]
     ];
 
-    this.defaultKeys = 
-    [
-      [ "Tableau", "and", "React", "plus", "D3" ]
-    ];
+    this.defaultKeys = [ "React", "D3", "Is", "Awesome", "Tableau"];
 
     this.viz = {};
     this.workbook = {};
     this.activeSheet = {};
     this.sheets = {};
 
+    this.twoDimensional = this.twoDimensional.bind(this);
+
+  }
+
+  twoDimensional(arr, size) 
+  {
+    var res = []; 
+    for(var i=0;i < arr.length;i = i+size)
+    res.push(arr.slice(i,i+size));
+    return res;
   }
 
   componentDidMount() {
@@ -61,6 +68,10 @@ class TableauChord extends Component {
           })
       };
       console.log(data);
+
+      // this doesn't work yet but can use something like this to create matrix from array
+      console.log(this.twoDimensional(data, 10, 10));
+      
       this.setState({
           viz: this.viz,
           data: data
@@ -73,8 +84,8 @@ class TableauChord extends Component {
     return (
        <div id = "chordDiv">
          <Chord
-                matrix={this.state.data || this.data || this.defaultData}
-                keys={this.state.keys || this.defaultKeys}
+                matrix={this.defaultData}
+                keys={this.defaultKeys}
                 margin={{
                     "top": 60,
                     "right": 60,
