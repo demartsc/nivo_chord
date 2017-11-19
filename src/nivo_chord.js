@@ -9,7 +9,9 @@ class TableauChord extends Component {
     this.state = {
       isLoading: true,
       viz: {},
-      data: {}
+      data: {}, 
+      keys: {},
+      matrix: {}
     };
 
     //this.updateData = this.updateData.bind(this);
@@ -20,6 +22,11 @@ class TableauChord extends Component {
       [ 18, 397, 404, 42, 125 ],
       [ 374, 415, 494, 242, 790 ],
       [ 1363, 376, 627, 319, 98 ]
+    ];
+
+    this.defaultKeys = 
+    [
+      [ "Tableau", "and", "React", "plus", "D3" ]
     ];
 
     this.viz = {};
@@ -69,14 +76,8 @@ class TableauChord extends Component {
     return (
        <div id = "chordDiv">
          <Chord
-                matrix={this.data || this.defaultData}
-                keys={[
-                    "John",
-                    "Raoul",
-                    "Jane",
-                    "Marcel",
-                    "Ibrahim"
-                ]}
+                matrix={this.state.data || this.data || this.defaultData}
+                keys={this.state.keys || this.defaultKeys}
                 margin={{
                     "top": 60,
                     "right": 60,

@@ -55,6 +55,7 @@ class App extends Component {
         // https://onlinehelp.tableau.com/current/api/js_api/en-us/JavaScriptAPI/js_api_sample_resize.html
         this.viz.setFrameSize(this.width, this.height + 100);
 
+        /* //this has been moved to nivo chord js file
         // get data code for react from https://github.com/cmtoomey/TableauReact
         const sheet = sheets.get("Sheet 6");
         const options = {
@@ -78,18 +79,15 @@ class App extends Component {
             this.setState({
                 data: data
             });
-        })
+        }) */
       }
     };
 
-    //initiate the viz
-    //console.log(window.tableau.Viz);
-
+    // Tableau.Viz was erroring, so went back to window.tableau.Viz
     this.viz = new window.tableau.Viz(this.container, vizURL, options);
     this.setState({
         viz:this.viz
     })
-    console.log(this.state);
   }
 
   componentDidMount() {
