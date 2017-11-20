@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Chord } from 'nivo';
 import Tableau from 'tableau-api';
+import _ from 'lodash';
 
 class TableauChord extends Component {
   constructor(props) {
@@ -10,8 +11,8 @@ class TableauChord extends Component {
       isLoading: true,
       viz: {},
       data: {}, 
-      keys: [],
-      matrix: []
+      keys: null,
+      matrix: null
     };
 
     //this.updateData = this.updateData.bind(this);
@@ -23,24 +24,37 @@ class TableauChord extends Component {
       [ 374, 415, 494, 242, 790 ],
       [ 1363, 376, 627, 319, 98 ]
     ];
+    this.matrix = [];
 
     this.defaultKeys = [ "React", "D3", "Is", "Awesome", "Tableau"];
+    this.uniqKeys = [];
 
     this.viz = {};
     this.workbook = {};
     this.activeSheet = {};
     this.sheets = {};
 
-    this.twoDimensional = this.twoDimensional.bind(this);
+    this.matrixify = this.matrixify.bind(this);
 
   }
 
-  twoDimensional(arr, size) 
+  matrixify(arr, size) 
   {
-    var res = []; 
-    for(var i=0;i < arr.length;i = i+size)
-    res.push(arr.slice(i,i+size));
-    return res;
+    var matrix = [];
+    for(var i=0; i < size; i++) {
+        matrix[i] = [];
+        for(var j=0; j < size; j++) {
+            matrix[i][j] = 0; // default all values to 0
+            //matrix[i][j] = Math.random();
+            for (var k=0; k<arr.length; k++){
+              if (arr[k]["Out"] === this.uniqKeys[i] && arr[k]["In"] === this.uniqKeys[j]) {
+                matrix[i][j] = arr[k]["Ct"]; //if we find a match, then populate value
+              }
+            }
+        }
+    }
+    //console.log(matrix);
+    return matrix;
   }
 
   componentDidMount() {
@@ -50,7 +64,7 @@ class TableauChord extends Component {
     this.sheets = this.activeSheet.getWorksheets();
 
     // get data code for react from https://github.com/cmtoomey/TableauReact
-    const sheet = this.sheets.get("Sheet 6");
+    const sheet = this.sheets[0];
     const options = {
         ignoreAliases: false,
         ignoreSelection: false,
@@ -67,14 +81,20 @@ class TableauChord extends Component {
               Ct: Math.round(tableauData[a][2].value,0)
           })
       };
-      console.log(data);
+      //console.log(data);
+
+      // use lodash to create a unique list of values in an array
+      this.uniqKeys = _.sortBy(_.union(_.map(data,"Out"),_.map(data,"In")));
+      //console.log(this.uniqKeys);
 
       // this doesn't work yet but can use something like this to create matrix from array
-      console.log(this.twoDimensional(data, 10, 10));
+      this.matrix = this.matrixify(data, this.uniqKeys.length);
       
       this.setState({
           viz: this.viz,
-          data: data
+          data: data, 
+          keys: this.uniqKeys,
+          matrix: this.matrix
       });
     })
 
@@ -84,8 +104,8 @@ class TableauChord extends Component {
     return (
        <div id = "chordDiv">
          <Chord
-                matrix={this.defaultData}
-                keys={this.defaultKeys}
+                matrix={this.state.matrix || this.defaultData}
+                keys={this.state.keys || this.defaultKeys}
                 margin={{
                     "top": 60,
                     "right": 60,
@@ -106,14 +126,14 @@ class TableauChord extends Component {
                 enableLabel={true}
                 label="id"
                 labelOffset={12}
-                labelRotation={0}
+                labelRotation={-90}
                 labelTextColor="inherit:darker(1)"
                 colors="nivo"
                 isInteractive={true}
                 arcHoverOpacity={1}
-                arcHoverOthersOpacity={0.25}
-                ribbonHoverOpacity={0.75}
-                ribbonHoverOthersOpacity={0.25}
+                arcHoverOthersOpacity={0.15}
+                ribbonHoverOpacity={1}
+                ribbonHoverOthersOpacity={0.15}
                 animate={true}
                 motionStiffness={90}
                 motionDamping={7}

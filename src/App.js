@@ -8,7 +8,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      url:"https://public.tableau.com/views/NivoChordIntegration/Dashboard2?:embed=y&:display_count=yes", 
+      url:"https://public.tableau.com/views/NivoChordIntegration/Dashboard3?:embed=y&:display_count=yes&:tabs=y", 
       viz: {},
       data: {}
     };
@@ -85,9 +85,9 @@ class App extends Component {
 
     // Tableau.Viz was erroring, so went back to window.tableau.Viz
     this.viz = new window.tableau.Viz(this.container, vizURL, options);
-    this.setState({
-        viz:this.viz
-    })
+//    this.setState({
+//        viz:this.viz
+//    })
   }
 
   componentDidMount() {
