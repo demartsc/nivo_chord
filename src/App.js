@@ -8,7 +8,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      url:"https://public.tableau.com/views/NivoChordIntegration/Dashboard2?:embed=y&:display_count=yes", 
+      url:"https://public.tableau.com/views/NivoChordIntegration/LesMiserables?:embed=y&:display_count=yes", 
       viz: {},
       data: {}
     };
