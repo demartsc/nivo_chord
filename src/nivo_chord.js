@@ -11,6 +11,7 @@ class TableauChord extends Component {
       isLoading: true,
       viz: {},
       data: {}, 
+      chordParms: {},
       keys: null,
       matrix: null
     };
@@ -32,6 +33,7 @@ class TableauChord extends Component {
     this.workbook = {};
     this.activeSheet = {};
     this.sheets = {};
+    this.chordParms = {};
 
     this.matrixify = this.matrixify.bind(this);
     this.onTabSwitch = this.onTabSwitch.bind(this);
@@ -81,6 +83,21 @@ class TableauChord extends Component {
     this.workbook = this.viz.getWorkbook();
     this.activeSheet = this.workbook.getActiveSheet();
     this.sheets = this.activeSheet.getWorksheets();
+
+
+    this.workbook.getParametersAsync().then(t => {
+      for (let j = 0; j < t.length; j++) {
+        if (t[j].getName().toUpperCase() === 'CHORD PARMS') {
+          console.log(t[j].getCurrentValue().formattedValue.toString());
+          this.chordParms = t[j].getCurrentValue().formattedValue.toString();
+          console.log(this.chordParms);
+          // this is not working yet, need to send the json formatted correctly
+          //console.log(JSON.parse(this.chordParms));
+        }
+      }
+      console.log(t); // log parms for troubleshooting
+    });
+
 
     // get data code for react from https://github.com/cmtoomey/TableauReact
     const sheet = this.sheets[0];
