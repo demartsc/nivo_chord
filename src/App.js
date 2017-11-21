@@ -8,7 +8,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      url:"https://public.tableau.com/views/NivoChordIntegration/Dashboard2?:embed=y&:display_count=yes&:showTabs=y", 
+      url:"https://public.tableau.com/views/NivoChordIntegration/Dashboard2?:embed=y&:display_count=yes", 
       viz: {},
       data: {}
     };
@@ -25,7 +25,7 @@ class App extends Component {
   initTableau() {
     const vizURL = this.state.url;
     const options = {
-      hideTabs: true,
+      hideTabs: false,
       width: this.width,
       height: this.height,
       onFirstInteractive: () => {

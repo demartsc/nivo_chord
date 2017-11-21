@@ -24,17 +24,20 @@ class TableauChord extends Component {
       [ 374, 415, 494, 242, 790 ],
       [ 1363, 376, 627, 319, 98 ]
     ];
-    this.matrix = [];
-
     this.defaultKeys = [ "React", "D3", "Is", "Awesome", "Tableau"];
+    
     this.uniqKeys = [];
-
+    this.matrix = [];
     this.viz = {};
     this.workbook = {};
     this.activeSheet = {};
     this.sheets = {};
 
     this.matrixify = this.matrixify.bind(this);
+    this.onTabSwitch = this.onTabSwitch.bind(this);
+    this.onMarkSelect = this.onMarkSelect.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
+    this.onParameterChange = this.onParameterChange.bind(this);
 
   }
 
@@ -44,7 +47,7 @@ class TableauChord extends Component {
     for(var i=0; i < size; i++) {
         matrix[i] = [];
         for(var j=0; j < size; j++) {
-            matrix[i][j] = 0; // default all values to 0
+            matrix[i][j] = 0.0; // default all values to 0
             //matrix[i][j] = Math.random();
             for (var k=0; k<arr.length; k++){
               if (arr[k]["Out"] === this.uniqKeys[i] && arr[k]["In"] === this.uniqKeys[j]) {
@@ -53,8 +56,24 @@ class TableauChord extends Component {
             }
         }
     }
-    //console.log(matrix);
+    console.log(matrix);
     return matrix;
+  }
+
+  onTabSwitch() {
+    console.log("made mark it");
+  }
+
+  onMarkSelect() {
+    console.log("made mark it");
+  }
+
+  onFilterChange() {
+    console.log("made filter it");
+  }
+
+  onParameterChange() {
+    console.log("made parameter it");
   }
 
   componentDidMount() {
@@ -72,16 +91,16 @@ class TableauChord extends Component {
     };
     sheet.getSummaryDataAsync(options).then((t) => {
       const tableauData = t.getData();
+      console.log(tableauData);
       let data = [];
-      const pointCount = tableauData.length; 
-      for(let a = 0; a < pointCount; a++ ) {
+      for(let a = 0; a < tableauData.length; a++ ) {
           data = data.concat({
               Out: tableauData[a][0].value,
               In: tableauData[a][1].value,
-              Ct: Math.round(tableauData[a][2].value,0)
+              Ct: parseFloat(tableauData[a][2].value)
           })
       };
-      //console.log(data);
+      console.log(data);
 
       // use lodash to create a unique list of values in an array
       this.uniqKeys = _.sortBy(_.union(_.map(data,"Out"),_.map(data,"In")));
@@ -97,7 +116,12 @@ class TableauChord extends Component {
           matrix: this.matrix
       });
     })
-
+    
+    //add event listener to the viz
+    //return this.viz.addEventListener(window.top.tableau.TableauEventName.TAB_SWITCH, this.onTabSwitch());
+    //return this.viz.addEventListener(window.top.tableau.TableauEventName.MARKS_SELECTION, this.onMarkSelect());
+    //return this.viz.addEventListener(window.top.tableau.TableauEventName.FILTER_CHANGE, this.onFilterChange());
+    //return this.viz.addEventListener(window.top.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, this.onParameterChange());
   }
 
   render() {
