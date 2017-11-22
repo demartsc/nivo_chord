@@ -107,8 +107,13 @@ class TableauChord extends Component {
       // getData() code for react from https://github.com/cmtoomey/TableauReact
       // we are still in the parameter async.then call here, chaining the get data call after it
       let sheet = {};
-      if (this.chordParms[activeSheetName].dataSheet) {
-        sheet = this.sheets.get(this.chordParms[activeSheetName].dataSheet);
+      if (activeSheetName in this.chordParms) { // need to check this more gracefull across the whole file. 
+        if ("dataSheet" in this.chordParms[activeSheetName]) { 
+          sheet = this.sheets.get(this.chordParms[activeSheetName].dataSheet);
+        }
+        else  {
+          sheet = this.sheets[0];
+        }
       }
       else  {
         sheet = this.sheets[0];
@@ -121,16 +126,43 @@ class TableauChord extends Component {
       sheet.getSummaryDataAsync(options).then((t) => {
         const tableauData = t.getData();
         //console.log(tableauData);
-        //const In = this.chordParms[activeSheetName].In
 
         for(let a = 0; a < tableauData.length; a++ ) {
             this.data = this.data.concat({
                 Out: tableauData[a][0].value,
-                In: In || tableauData[a][1].value,
+                In: tableauData[a][1].value,
                 Ct: parseFloat(tableauData[a][2].value)
             })
         };
         console.log(this.data);
+
+/*
+        // LEFT OFF HERE LEFT OFF HERE LEFT OFF HERE
+        // this does not work yet, but it is meant to pull out specific fields
+        //let tempIn = null;
+        //let tempOut = null;
+        //let tempCt = null;
+        // console.log(tableauData);
+        // console.log(this.chordParms[activeSheetName]);
+
+          // this goes inside for loop
+          //first check whether fields were provided in tableau, if so use them vs default of 0, 1, 2
+          if ("in" in this.chordParms[activeSheetName]) {
+            tempIn = tableauData[a][this.chordParms[activeSheetName].in].value;
+          } else {
+            tempIn = tableauData[a][0].value
+          }
+          if ("out" in this.chordParms[activeSheetName]) {
+            tempOut = tableauData[a][this.chordParms[activeSheetName].out].value;
+          } else {
+            tempOut = tableauData[a][1].value
+          }
+          if ("ct" in this.chordParms[activeSheetName]) {
+            tempCt = tableauData[a][this.chordParms[activeSheetName].ct].value;
+          } else {
+            tempCt = tableauData[a][2].value
+          }
+*/
   
         // use lodash to create a unique list of values in an array
         this.uniqKeys = _.sortBy(_.union(_.map(this.data,"Out"),_.map(this.data,"In")));
