@@ -27,13 +27,15 @@ class TableauChord extends Component {
     ];
     this.defaultKeys = [ "React", "D3", "Is", "Awesome", "Tableau"];
     
-    this.uniqKeys = [];
-    this.matrix = [];
     this.viz = {};
     this.workbook = {};
     this.activeSheet = {};
     this.sheets = {};
+
+    this.uniqKeys = [];
+    this.matrix = [];
     this.chordParms = [];
+    this.data = [];
 
     this.matrixify = this.matrixify.bind(this);
     this.onTabSwitch = this.onTabSwitch.bind(this);
@@ -84,53 +86,69 @@ class TableauChord extends Component {
     this.activeSheet = this.workbook.getActiveSheet();
     this.sheets = this.activeSheet.getWorksheets();
 
+    // simplify reference to active tab name
+    let activeSheetName = this.activeSheet.getName().toString();
+
     this.workbook.getParametersAsync().then(t => {
       for (let j = 0; j < t.length; j++) {
         if (t[j].getName().toUpperCase() === 'CHORD PARMS') {
-          console.log(t[j].getCurrentValue().formattedValue.toString());
-          console.log(this.activeSheet.getName());
           this.chordParms = JSON.parse(t[j].getCurrentValue().formattedValue.toString());
-          console.log(this.chordParms);
-          console.log(this.chordParms[this.activeSheet.getName().toString()]);
+
+          //debugging to be removed
+          //console.log(this.chordParms);
+          //console.log(this.chordParms[activeSheetName]);
+          //console.log(t[j].getCurrentValue().formattedValue.toString());
+          //console.log(activeSheetName);
+          //console.log(this.chordParms[activeSheetName]);
         }
       }
-      console.log(t); // log parms for troubleshooting
-    });
+      //console.log(t); // log parms for troubleshooting
 
-    // get data code for react from https://github.com/cmtoomey/TableauReact
-    const sheet = this.sheets[0];
-    const options = {
-        ignoreAliases: false,
-        ignoreSelection: false,
-        includeAllColumns: false
-    };
-    sheet.getSummaryDataAsync(options).then((t) => {
-      const tableauData = t.getData();
-      console.log(tableauData);
-      let data = [];
-      for(let a = 0; a < tableauData.length; a++ ) {
-          data = data.concat({
-              Out: tableauData[a][0].value,
-              In: tableauData[a][1].value,
-              Ct: parseFloat(tableauData[a][2].value)
-          })
+      // getData() code for react from https://github.com/cmtoomey/TableauReact
+      // we are still in the parameter async.then call here, chaining the get data call after it
+      let sheet = {};
+      if (this.chordParms[activeSheetName].dataSheet) {
+        sheet = this.sheets.get(this.chordParms[activeSheetName].dataSheet);
+      }
+      else  {
+        sheet = this.sheets[0];
+      }
+      const options = {
+          ignoreAliases: false,
+          ignoreSelection: false,
+          includeAllColumns: false
       };
-      console.log(data);
+      sheet.getSummaryDataAsync(options).then((t) => {
+        const tableauData = t.getData();
+        //console.log(tableauData);
+        //const In = this.chordParms[activeSheetName].In
 
-      // use lodash to create a unique list of values in an array
-      this.uniqKeys = _.sortBy(_.union(_.map(data,"Out"),_.map(data,"In")));
-      //console.log(this.uniqKeys);
+        for(let a = 0; a < tableauData.length; a++ ) {
+            this.data = this.data.concat({
+                Out: tableauData[a][0].value,
+                In: In || tableauData[a][1].value,
+                Ct: parseFloat(tableauData[a][2].value)
+            })
+        };
+        console.log(this.data);
+  
+        // use lodash to create a unique list of values in an array
+        this.uniqKeys = _.sortBy(_.union(_.map(this.data,"Out"),_.map(this.data,"In")));
+        //console.log(this.uniqKeys);
 
-      // this doesn't work yet but can use something like this to create matrix from array
-      this.matrix = this.matrixify(data, this.uniqKeys.length);
-      
-      this.setState({
-          viz: this.viz,
-          data: data, 
-          keys: this.uniqKeys,
-          matrix: this.matrix
-      });
-    })
+        // this doesn't work yet but can use something like this to create matrix from array
+        this.matrix = this.matrixify(this.data, this.uniqKeys.length);
+        
+        // update state after we do all of this stuff, triggers re-render
+        this.setState({
+            viz: this.viz,
+            data: this.data, 
+            keys: this.uniqKeys,
+            matrix: this.matrix, 
+            chordParms: this.chordParms
+        });
+      }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
+    }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
     
     //add event listener to the viz
     //return this.viz.addEventListener(window.top.tableau.TableauEventName.TAB_SWITCH, this.onTabSwitch());
