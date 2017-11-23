@@ -37,6 +37,8 @@ class TableauChord extends Component {
     this.chordParms = [];
     this.data = [];
 
+    this.getColumnIndexes = this.getColumnIndexes.bind(this);
+    this.convertRowToObject = this.convertRowToObject.bind(this);
     this.matrixify = this.matrixify.bind(this);
     this.onTabSwitch = this.onTabSwitch.bind(this);
     this.onMarkSelect = this.onMarkSelect.bind(this);
@@ -44,6 +46,31 @@ class TableauChord extends Component {
     this.onParameterChange = this.onParameterChange.bind(this);
 
   }
+
+  getColumnIndexes(table, required_keys) {
+    let colIdxMaps = {};
+    let ref = table.getColumns();
+    for (let j = 0; j < ref.length; j++) {
+      let c = ref[j];
+      let fn = c.getFieldName();
+      for (let x = 0; x < required_keys.length; x++) {
+        if (required_keys[x] === fn) {
+          colIdxMaps[fn] = c.getIndex();
+        }        
+      }
+    }
+    return colIdxMaps;
+  };
+
+  convertRowToObject(row, attrs_map) {
+    let o = {};
+    let name = "";
+    for (name in attrs_map) {
+      let id = attrs_map[name];
+      o[name] = row[id].value;
+    }
+    return o;
+  };
 
   matrixify(arr, size) 
   {
@@ -124,9 +151,43 @@ class TableauChord extends Component {
           includeAllColumns: false
       };
       sheet.getSummaryDataAsync(options).then((t) => {
+        //const table = t;  //not sure if we need this
         const tableauData = t.getData();
+        let col_names = [];
+        let col_indexes = [];
         //console.log(tableauData);
 
+        // if we have been sent parms for this dashboard grab fields
+        if (activeSheetName in this.chordParms) {
+          let tempIn = null;
+          let tempOut = null;
+          let tempCt = null;
+
+          if ("in" in this.chordParms[activeSheetName]) {
+            col_names.push(this.chordParms[activeSheetName].in);
+          } 
+
+          if ("out" in this.chordParms[activeSheetName]) {
+            col_names.push(this.chordParms[activeSheetName].out);
+          } 
+
+          if ("val" in this.chordParms[activeSheetName]) {
+            col_names.push(this.chordParms[activeSheetName].val);
+          } 
+          console.log(col_names);
+
+          col_indexes = this.getColumnIndexes(t,col_names);
+          console.log(col_indexes);
+        }
+
+        // now that we have the column name and indexes we can build our table for chord
+        for (let j = 0, len = tableauData.length; j < len; j++) {
+          console.log(this.convertRowToObject(tableauData[j], col_indexes));
+          this.data.push(this.convertRowToObject(tableauData[j], col_indexes));
+        }
+
+        console.log(this.data);
+/*
         for(let a = 0; a < tableauData.length; a++ ) {
             this.data = this.data.concat({
                 Out: tableauData[a][0].value,
@@ -136,22 +197,13 @@ class TableauChord extends Component {
         };
         console.log(this.data);
 
-/*
         // LEFT OFF HERE LEFT OFF HERE LEFT OFF HERE
         // this does not work yet, but it is meant to pull out specific fields
-        //let tempIn = null;
-        //let tempOut = null;
-        //let tempCt = null;
         // console.log(tableauData);
         // console.log(this.chordParms[activeSheetName]);
 
           // this goes inside for loop
           //first check whether fields were provided in tableau, if so use them vs default of 0, 1, 2
-          if ("in" in this.chordParms[activeSheetName]) {
-            tempIn = tableauData[a][this.chordParms[activeSheetName].in].value;
-          } else {
-            tempIn = tableauData[a][0].value
-          }
           if ("out" in this.chordParms[activeSheetName]) {
             tempOut = tableauData[a][this.chordParms[activeSheetName].out].value;
           } else {
