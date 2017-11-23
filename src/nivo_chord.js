@@ -217,7 +217,7 @@ class TableauChord extends Component {
       outField, 
       valField, 
       ...restChordProps
-    } = this.chordProps
+    } = this.chordParms
 
     return (
        <div id = "chordDiv">
