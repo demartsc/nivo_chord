@@ -72,7 +72,7 @@ class TableauChord extends Component {
     return o;
   };
 
-  matrixify(arr, size) 
+  matrixify(arr, size, col_names)
   {
     var matrix = [];
     for(var i=0; i < size; i++) {
@@ -81,13 +81,13 @@ class TableauChord extends Component {
             matrix[i][j] = 0.0; // default all values to 0
             //matrix[i][j] = Math.random();
             for (var k=0; k<arr.length; k++){
-              if (arr[k]["Out"] === this.uniqKeys[i] && arr[k]["In"] === this.uniqKeys[j]) {
-                matrix[i][j] = arr[k]["Ct"]; //if we find a match, then populate value
+              if (arr[k][col_names[0]] === this.uniqKeys[i] && arr[k][col_names[1]] === this.uniqKeys[j]) {
+                matrix[i][j] = parseFloat(arr[k][col_names[2]]); //if we find a match, then populate value
               }
             }
         }
     }
-    console.log(matrix);
+    //console.log(matrix);
     return matrix;
   }
 
@@ -120,13 +120,6 @@ class TableauChord extends Component {
       for (let j = 0; j < t.length; j++) {
         if (t[j].getName().toUpperCase() === 'CHORD PARMS') {
           this.chordParms = JSON.parse(t[j].getCurrentValue().formattedValue.toString());
-
-          //debugging to be removed
-          //console.log(this.chordParms);
-          //console.log(this.chordParms[activeSheetName]);
-          //console.log(t[j].getCurrentValue().formattedValue.toString());
-          //console.log(activeSheetName);
-          //console.log(this.chordParms[activeSheetName]);
         }
       }
       //console.log(t); // log parms for troubleshooting
@@ -159,69 +152,45 @@ class TableauChord extends Component {
 
         // if we have been sent parms for this dashboard grab fields
         if (activeSheetName in this.chordParms) {
-          let tempIn = null;
-          let tempOut = null;
-          let tempCt = null;
-
-          if ("in" in this.chordParms[activeSheetName]) {
+          if ("inField" in this.chordParms[activeSheetName]) {
             col_names.push(this.chordParms[activeSheetName].in);
-          } 
+          } else {
+            col_names.push(t.getColumns()[0].getFieldName());
+          }
 
-          if ("out" in this.chordParms[activeSheetName]) {
+          if ("outField" in this.chordParms[activeSheetName]) {
             col_names.push(this.chordParms[activeSheetName].out);
-          } 
+          } else {
+            col_names.push(t.getColumns()[1].getFieldName());
+          }
 
-          if ("val" in this.chordParms[activeSheetName]) {
+          if ("valField" in this.chordParms[activeSheetName]) {
             col_names.push(this.chordParms[activeSheetName].val);
-          } 
-          console.log(col_names);
-
-          col_indexes = this.getColumnIndexes(t,col_names);
-          console.log(col_indexes);
+          } else {
+            col_names.push(t.getColumns()[2].getFieldName());
+          }
+        } else {
+            col_names.push(t.getColumns()[0].getFieldName());
+            col_names.push(t.getColumns()[1].getFieldName());
+            col_names.push(t.getColumns()[2].getFieldName());
         }
+        //console.log(col_names);
+        col_indexes = this.getColumnIndexes(t,col_names);
+        //console.log(col_indexes);
 
         // now that we have the column name and indexes we can build our table for chord
         for (let j = 0, len = tableauData.length; j < len; j++) {
-          console.log(this.convertRowToObject(tableauData[j], col_indexes));
+          //console.log(this.convertRowToObject(tableauData[j], col_indexes));
           this.data.push(this.convertRowToObject(tableauData[j], col_indexes));
         }
-
         console.log(this.data);
-/*
-        for(let a = 0; a < tableauData.length; a++ ) {
-            this.data = this.data.concat({
-                Out: tableauData[a][0].value,
-                In: tableauData[a][1].value,
-                Ct: parseFloat(tableauData[a][2].value)
-            })
-        };
-        console.log(this.data);
-
-        // LEFT OFF HERE LEFT OFF HERE LEFT OFF HERE
-        // this does not work yet, but it is meant to pull out specific fields
-        // console.log(tableauData);
-        // console.log(this.chordParms[activeSheetName]);
-
-          // this goes inside for loop
-          //first check whether fields were provided in tableau, if so use them vs default of 0, 1, 2
-          if ("out" in this.chordParms[activeSheetName]) {
-            tempOut = tableauData[a][this.chordParms[activeSheetName].out].value;
-          } else {
-            tempOut = tableauData[a][1].value
-          }
-          if ("ct" in this.chordParms[activeSheetName]) {
-            tempCt = tableauData[a][this.chordParms[activeSheetName].ct].value;
-          } else {
-            tempCt = tableauData[a][2].value
-          }
-*/
   
         // use lodash to create a unique list of values in an array
-        this.uniqKeys = _.sortBy(_.union(_.map(this.data,"Out"),_.map(this.data,"In")));
+        this.uniqKeys = _.sortBy(_.union(_.map(this.data,col_names[0]),_.map(this.data, col_names[1])));
         //console.log(this.uniqKeys);
 
         // this doesn't work yet but can use something like this to create matrix from array
-        this.matrix = this.matrixify(this.data, this.uniqKeys.length);
+        this.matrix = this.matrixify(this.data, this.uniqKeys.length, col_names);
         
         // update state after we do all of this stuff, triggers re-render
         this.setState({
@@ -230,7 +199,7 @@ class TableauChord extends Component {
             keys: this.uniqKeys,
             matrix: this.matrix, 
             chordParms: this.chordParms
-        });
+        }); // these error calls do not do anything
       }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
     }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
     
@@ -242,6 +211,14 @@ class TableauChord extends Component {
   }
 
   render() {
+    const {
+      dataSheet, 
+      inField, 
+      outField, 
+      valField, 
+      ...restChordProps
+    } = this.chordProps
+
     return (
        <div id = "chordDiv">
          <Chord
@@ -278,6 +255,7 @@ class TableauChord extends Component {
                 animate={true}
                 motionStiffness={90}
                 motionDamping={7}
+                {...restChordProps} // this is passed from users and will overwrite above defaults
             />
       </div>
     );
