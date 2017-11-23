@@ -248,7 +248,7 @@ class TableauChord extends Component {
                 labelOffset={12}
                 labelRotation={-90}
                 labelTextColor="inherit:darker(1)"
-                colors="nivo"
+                colors="set3"
                 isInteractive={true}
                 arcHoverOpacity={1}
                 arcHoverOthersOpacity={0.15}
