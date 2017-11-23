@@ -17,7 +17,8 @@ class TableauChord extends Component {
     };
 
     //this.updateData = this.updateData.bind(this);
-    this.defaultData =
+    this.defaultData =[];
+    /*
     [
       [ 64, 331, 491, 77, 202 ],
       [ 1775, 440, 944, 1052, 154 ],
@@ -25,7 +26,8 @@ class TableauChord extends Component {
       [ 374, 415, 494, 242, 790 ],
       [ 1363, 376, 627, 319, 98 ]
     ];
-    this.defaultKeys = [ "React", "D3", "Is", "Awesome", "Tableau"];
+    */
+    this.defaultKeys = []; // [ "React", "D3", "Is", "Awesome", "Tableau"];
     
     this.viz = {};
     this.workbook = {};
@@ -217,7 +219,7 @@ class TableauChord extends Component {
       outField, 
       valField, 
       ...restChordProps
-    } = this.state.chordParms
+    } = this.state.chordParms || {};
 
     return (
        <div id = "chordDiv">

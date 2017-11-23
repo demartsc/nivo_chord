@@ -31,12 +31,12 @@ class App extends Component {
       onFirstInteractive: () => {
         const wrkbk = this.viz.getWorkbook();
         const activeSheet = this.viz.getWorkbook().getActiveSheet();
-        const sheets = activeSheet.getWorksheets();
-        const name = wrkbk.getName();
-        const objs = activeSheet.getObjects();
-        const pubSheets = wrkbk.getPublishedSheetsInfo();
+        //const sheets = activeSheet.getWorksheets();
+        //const name = wrkbk.getName();
+        //const objs = activeSheet.getObjects();
+        //const pubSheets = wrkbk.getPublishedSheetsInfo();
         //console.log(objs);
-        const filters = [];
+        //const filters = [];
         //console.log(sheets);
 
         // need to check what happens with automatic sized workbooks...
