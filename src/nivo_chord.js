@@ -93,8 +93,9 @@ class TableauChord extends Component {
     return matrix;
   }
 
-  onTabSwitch() {
-    console.log("made mark it");
+  onTabSwitch(tabEvent) {
+    console.log("made tab it");
+    console.log(tabEvent);
   }
 
   onMarkSelect() {
