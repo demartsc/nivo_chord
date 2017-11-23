@@ -153,19 +153,19 @@ class TableauChord extends Component {
         // if we have been sent parms for this dashboard grab fields
         if (activeSheetName in this.chordParms) {
           if ("inField" in this.chordParms[activeSheetName]) {
-            col_names.push(this.chordParms[activeSheetName].in);
+            col_names.push(this.chordParms[activeSheetName].inField);
           } else {
             col_names.push(t.getColumns()[0].getFieldName());
           }
 
           if ("outField" in this.chordParms[activeSheetName]) {
-            col_names.push(this.chordParms[activeSheetName].out);
+            col_names.push(this.chordParms[activeSheetName].outField);
           } else {
             col_names.push(t.getColumns()[1].getFieldName());
           }
 
           if ("valField" in this.chordParms[activeSheetName]) {
-            col_names.push(this.chordParms[activeSheetName].val);
+            col_names.push(this.chordParms[activeSheetName].valField);
           } else {
             col_names.push(t.getColumns()[2].getFieldName());
           }
@@ -183,7 +183,7 @@ class TableauChord extends Component {
           //console.log(this.convertRowToObject(tableauData[j], col_indexes));
           this.data.push(this.convertRowToObject(tableauData[j], col_indexes));
         }
-        console.log(this.data);
+        //console.log(this.data);
   
         // use lodash to create a unique list of values in an array
         this.uniqKeys = _.sortBy(_.union(_.map(this.data,col_names[0]),_.map(this.data, col_names[1])));
@@ -198,7 +198,7 @@ class TableauChord extends Component {
             data: this.data, 
             keys: this.uniqKeys,
             matrix: this.matrix, 
-            chordParms: this.chordParms
+            chordParms: this.chordParms[activeSheetName]
         }); // these error calls do not do anything
       }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
     }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
@@ -211,13 +211,13 @@ class TableauChord extends Component {
   }
 
   render() {
-    const {
+    const { // this will remove the props that we use above, may not be necessary, but i like it
       dataSheet, 
       inField, 
       outField, 
       valField, 
       ...restChordProps
-    } = this.chordParms
+    } = this.state.chordParms
 
     return (
        <div id = "chordDiv">
