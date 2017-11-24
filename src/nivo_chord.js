@@ -79,16 +79,23 @@ class TableauChord extends Component {
   {
     var matrix = [];
     for(var i=0; i < size; i++) {
-        matrix[i] = [];
-        for(var j=0; j < size; j++) {
-            matrix[i][j] = 0.0; // default all values to 0
-            //matrix[i][j] = Math.random();
-            for (var k=0; k<arr.length; k++){
-              if (arr[k][col_names[0]] === this.uniqKeys[i] && arr[k][col_names[1]] === this.uniqKeys[j]) {
-                matrix[i][j] = parseFloat(arr[k][col_names[2]]); //if we find a match, then populate value
-              }
+      matrix[i] = [];
+      for(var j=0; j < size; j++) {
+        matrix[i][j] = 0.0; // default all values to 0
+      }
+    }
+
+    for(var i=0; i < size; i++) {
+      for(var j=0; j < size; j++) {
+        for (var k=0; k<arr.length; k++){
+          if (arr[k][col_names[0]] === this.uniqKeys[i] && arr[k][col_names[1]] === this.uniqKeys[j]) {
+            matrix[i][j] = parseFloat(arr[k][col_names[2]]); //if we find a match, then populate value
+            if (matrix[j][i] === 0.0) {
+              matrix[j][i] = parseFloat(arr[k][col_names[2]]); //if we find a match, then populate value
             }
+          } // testing this out, will need to remove it
         }
+      }
     }
     //console.log(matrix);
     return matrix;
@@ -195,7 +202,8 @@ class TableauChord extends Component {
         //console.log(this.data);
   
         // use lodash to create a unique list of values in an array
-        this.uniqKeys = _.sortBy(_.union(_.map(this.data,col_names[0]),_.map(this.data, col_names[1])));
+        this.uniqKeys = _.union(_.map(this.data,col_names[0]),_.map(this.data, col_names[1]));
+        //this.uniqKeys = _.sortBy(_.union(_.map(this.data,col_names[0]),_.map(this.data, col_names[1])));
         //console.log(this.uniqKeys);
 
         // this doesn't work yet but can use something like this to create matrix from array
