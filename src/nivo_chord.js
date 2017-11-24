@@ -42,6 +42,7 @@ class TableauChord extends Component {
     this.getColumnIndexes = this.getColumnIndexes.bind(this);
     this.convertRowToObject = this.convertRowToObject.bind(this);
     this.matrixify = this.matrixify.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.onTabSwitch = this.onTabSwitch.bind(this);
     this.onMarkSelect = this.onMarkSelect.bind(this);
     this.onFilterChange = this.onFilterChange.bind(this);
@@ -91,6 +92,11 @@ class TableauChord extends Component {
     }
     //console.log(matrix);
     return matrix;
+  }
+
+  handleClick(e) {
+    console.log('Nivo chord was clicked');
+    //console.log(e.target);
   }
 
   onTabSwitch(tabEvent) {
@@ -222,9 +228,10 @@ class TableauChord extends Component {
       ...restChordProps
     } = this.state.chordParms || {};
 
-    return (
-       <div id = "chordDiv">
+    return ( //onMouseOver={this.handleClick} 
+       <div id = "chordDiv" onClick={this.handleClick}>
          <Chord
+                id = "id" // this doesn't work :(, if we can get the value added we can use event listeners no prob
                 matrix={this.state.matrix || this.defaultData}
                 keys={this.state.keys || this.defaultKeys}
                 margin={{
