@@ -55,35 +55,10 @@ class App extends Component {
         // https://onlinehelp.tableau.com/current/api/js_api/en-us/JavaScriptAPI/js_api_sample_resize.html
         this.viz.setFrameSize(this.width, this.height + 100);
 
-        /* //this has been moved to nivo chord js file
-        // get data code for react from https://github.com/cmtoomey/TableauReact
-        const sheet = sheets.get("Sheet 6");
-        const options = {
-            ignoreAliases: false,
-            ignoreSelection: false,
-            includeAllColumns: false
-        };
-        //console.log(sheet);
-        sheet.getSummaryDataAsync(options).then((t) => {
-            const tableauData = t.getData();
-            console.log(tableauData);
-            let data = [];
-            const pointCount = tableauData.length; 
-            for(let a = 0; a < pointCount; a++ ) {
-                data = data.concat({
-                    Out: tableauData[a][0].value,
-                    In: tableauData[a][1].value,
-                    Ct: Math.round(tableauData[a][2].value,0)
-                })
-            };
-            this.setState({
-                data: data
-            });
-        }) */
-      this.viz.addEventListener(window.top.tableau.TableauEventName.TAB_SWITCH, function(a) {console.log("TAB"); console.log(a);});
-      this.viz.addEventListener(window.top.tableau.TableauEventName.FILTER_CHANGE, function(a) {console.log("FILTER"); console.log(a);});
-      this.viz.addEventListener(window.top.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, function(a) {console.log("PARAMETER"); console.log(a);});
-      this.viz.addEventListener(window.top.tableau.TableauEventName.MARKS_SELECTION, function(a) {console.log("MARK"); console.log(a);});
+        this.viz.addEventListener(window.top.tableau.TableauEventName.TAB_SWITCH, function(a) {console.log("TAB"); console.log(a);});
+        this.viz.addEventListener(window.top.tableau.TableauEventName.FILTER_CHANGE, function(a) {console.log("FILTER"); console.log(a);});
+        this.viz.addEventListener(window.top.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, function(a) {console.log("PARAMETER"); console.log(a);});
+        this.viz.addEventListener(window.top.tableau.TableauEventName.MARKS_SELECTION, function(a) {console.log("MARK"); console.log(a);});
       }
     };
 
