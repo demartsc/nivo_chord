@@ -43,11 +43,6 @@ class TableauChord extends Component {
     this.convertRowToObject = this.convertRowToObject.bind(this);
     this.matrixify = this.matrixify.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.onTabSwitch = this.onTabSwitch.bind(this);
-    this.onMarkSelect = this.onMarkSelect.bind(this);
-    this.onFilterChange = this.onFilterChange.bind(this);
-    this.onParameterChange = this.onParameterChange.bind(this);
-
   }
 
   getColumnIndexes(table, required_keys) {
@@ -85,8 +80,8 @@ class TableauChord extends Component {
       }
     }
 
-    for(var i=0; i < size; i++) {
-      for(var j=0; j < size; j++) {
+    for(i=0; i < size; i++) {
+      for(j=0; j < size; j++) {
         for (var k=0; k<arr.length; k++){
           if (arr[k][col_names[0]] === this.uniqKeys[i] && arr[k][col_names[1]] === this.uniqKeys[j]) {
             matrix[i][j] = parseFloat(arr[k][col_names[2]]); //if we find a match, then populate value
@@ -106,24 +101,12 @@ class TableauChord extends Component {
     //console.log(e.target);
   }
 
-  onTabSwitch(tabEvent) {
-    console.log("made tab it");
-    console.log(tabEvent);
-  }
-
-  onMarkSelect() {
-    console.log("made mark it");
-  }
-
-  onFilterChange() {
-    console.log("made filter it");
-  }
-
-  onParameterChange() {
-    console.log("made parameter it");
+  componentDidUpdate() {
+    console.log("updated");
   }
 
   componentDidMount() {
+    console.log("mounted");
     this.viz = window.top.tableau.VizManager.getVizs()[0];
     this.workbook = this.viz.getWorkbook();
     this.activeSheet = this.workbook.getActiveSheet();

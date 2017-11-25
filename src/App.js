@@ -8,8 +8,12 @@ class App extends Component {
     super(props);
 
     this.state = {
-      url:"https://public.tableau.com/views/NivoChordIntegration/LesMiserables?:embed=y&:display_count=yes", 
+      url:"https://public.tableau.com/views/NivoChordIntegration/Golf?:embed=y&:display_count=yes", 
       viz: {},
+      tab: {}, //for testing, may need to be removed
+      filter: {},
+      parameter: {},
+      mark: {},
       data: {}
     };
 
@@ -20,8 +24,13 @@ class App extends Component {
 
     this.viz = {};
 
+    this.onTabSwitch = this.onTabSwitch.bind(this);
+    this.onMarkSelect = this.onMarkSelect.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
+    this.onParameterChange = this.onParameterChange.bind(this);
   }
   
+  //for testing, may need to be removed
   initTableau() {
     const vizURL = this.state.url;
     const options = {
@@ -29,15 +38,7 @@ class App extends Component {
       width: this.width,
       height: this.height,
       onFirstInteractive: () => {
-        const wrkbk = this.viz.getWorkbook();
         const activeSheet = this.viz.getWorkbook().getActiveSheet();
-        //const sheets = activeSheet.getWorksheets();
-        //const name = wrkbk.getName();
-        //const objs = activeSheet.getObjects();
-        //const pubSheets = wrkbk.getPublishedSheetsInfo();
-        //console.log(objs);
-        //const filters = [];
-        //console.log(sheets);
 
         // need to check what happens with automatic sized workbooks...
         //console.log(activeSheet.getSize());
@@ -55,10 +56,11 @@ class App extends Component {
         // https://onlinehelp.tableau.com/current/api/js_api/en-us/JavaScriptAPI/js_api_sample_resize.html
         this.viz.setFrameSize(this.width, this.height + 100);
 
-        this.viz.addEventListener(window.top.tableau.TableauEventName.TAB_SWITCH, function(a) {console.log("TAB"); console.log(a);});
-        this.viz.addEventListener(window.top.tableau.TableauEventName.FILTER_CHANGE, function(a) {console.log("FILTER"); console.log(a);});
-        this.viz.addEventListener(window.top.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, function(a) {console.log("PARAMETER"); console.log(a);});
-        this.viz.addEventListener(window.top.tableau.TableauEventName.MARKS_SELECTION, function(a) {console.log("MARK"); console.log(a);});
+        // add event listeners
+        this.viz.addEventListener(window.tableau.TableauEventName.TAB_SWITCH, this.onTabSwitch);
+        this.viz.addEventListener(window.tableau.TableauEventName.FILTER_CHANGE, this.onFilterChange);
+        this.viz.addEventListener(window.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, this.onParameterChange);
+        this.viz.addEventListener(window.tableau.TableauEventName.MARKS_SELECTION, this.onMarkSelect);
       }
     };
 
@@ -67,6 +69,42 @@ class App extends Component {
 //    this.setState({
 //        viz:this.viz
 //    })
+  }
+
+  onTabSwitch(tabEvent) {
+    console.log("made tab it");
+    console.log(tabEvent);
+    this.setState({
+      tab: tabEvent
+    })
+  }
+
+  onMarkSelect(markEvent) {
+    console.log("made mark it");
+    console.log(markEvent);
+    this.setState({
+      mark: markEvent
+    })
+  }
+
+  onFilterChange(filterEvent) {
+    console.log("made filter it");
+    console.log(filterEvent);
+    this.setState({
+      filter: filterEvent
+    })
+  }
+
+  onParameterChange(parmEvent) {
+    console.log("made parameter it");
+    console.log(parmEvent);
+    this.setState({
+      parameter: parmEvent
+    })
+  }
+
+  componentDidUpdate() {
+    console.log("app updated");
   }
 
   componentDidMount() {
