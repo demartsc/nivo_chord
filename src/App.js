@@ -80,6 +80,10 @@ class App extends Component {
                 data: data
             });
         }) */
+      this.viz.addEventListener(window.top.tableau.TableauEventName.TAB_SWITCH, function(a) {console.log("TAB"); console.log(a);});
+      this.viz.addEventListener(window.top.tableau.TableauEventName.FILTER_CHANGE, function(a) {console.log("FILTER"); console.log(a);});
+      this.viz.addEventListener(window.top.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, function(a) {console.log("PARAMETER"); console.log(a);});
+      this.viz.addEventListener(window.top.tableau.TableauEventName.MARKS_SELECTION, function(a) {console.log("MARK"); console.log(a);});
       }
     };
 

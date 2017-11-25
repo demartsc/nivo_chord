@@ -220,8 +220,8 @@ class TableauChord extends Component {
       }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
     }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
     
-    //add event listener to the viz
-    //return this.viz.addEventListener(window.top.tableau.TableauEventName.TAB_SWITCH, this.onTabSwitch());
+    //add event listener to the viz MOVED TO APP.JS
+    //return this.viz.addEventListener('tabswitch', function(a) {console.log("here"); console.log(a);});
     //return this.viz.addEventListener(window.top.tableau.TableauEventName.MARKS_SELECTION, this.onMarkSelect());
     //return this.viz.addEventListener(window.top.tableau.TableauEventName.FILTER_CHANGE, this.onFilterChange());
     //return this.viz.addEventListener(window.top.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, this.onParameterChange());
