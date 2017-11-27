@@ -27,47 +27,6 @@ class App extends Component {
     this.onFilterChange = this.onFilterChange.bind(this);
     this.onParameterChange = this.onParameterChange.bind(this);
   }
-  
-  //for testing, may need to be removed
-  initTableau() {
-    const vizURL = this.state.url;
-    const options = {
-      hideTabs: false,
-      width: this.width,
-      height: this.height,
-      onFirstInteractive: () => {
-        const activeSheet = this.viz.getWorkbook().getActiveSheet();
-
-        // need to check what happens with automatic sized workbooks...
-        //console.log(activeSheet.getSize());
-        if (activeSheet.getSize().maxSize) {
-          this.width = activeSheet.getSize().maxSize.width;
-          this.height = activeSheet.getSize().maxSize.height;
-        } else {
-          this.width = 800;
-          this.height = 800;
-        }
-
-        // this will set the frame size the maximum allowed by the viz
-        // need to vet whether this will be a problem with automatic vizzes however
-        // see note herein for dashboards as well...
-        // https://onlinehelp.tableau.com/current/api/js_api/en-us/JavaScriptAPI/js_api_sample_resize.html
-        this.viz.setFrameSize(this.width, this.height + 100);
-
-        // add event listeners
-        this.viz.addEventListener(window.tableau.TableauEventName.TAB_SWITCH, this.onTabSwitch);
-        this.viz.addEventListener(window.tableau.TableauEventName.FILTER_CHANGE, this.onFilterChange);
-        this.viz.addEventListener(window.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, this.onParameterChange);
-        //this.viz.addEventListener(window.tableau.TableauEventName.MARKS_SELECTION, this.onMarkSelect);
-      }
-    };
-
-    // Tableau.Viz was erroring, so went back to window.tableau.Viz
-    this.viz = new window.tableau.Viz(this.container, vizURL, options);
-    this.setState({
-       viz:this.viz
-    })
-  }
 
   // was trying to use these to trigger chord refresh, but not working yet
   onTabSwitch(tabEvent) {
@@ -99,6 +58,47 @@ class App extends Component {
     console.log(parmEvent);
     this.setState({
       parameter: parmEvent
+    })
+  }
+
+  //for testing, may need to be removed
+  initTableau() {
+    const vizURL = this.state.url;
+    const options = {
+      hideTabs: false,
+      width: this.width,
+      height: this.height,
+      onFirstInteractive: () => {
+        const activeSheet = this.viz.getWorkbook().getActiveSheet();
+
+        // need to check what happens with automatic sized workbooks...
+        //console.log(activeSheet.getSize());
+        if (activeSheet.getSize().maxSize) {
+          this.width = activeSheet.getSize().maxSize.width;
+          this.height = activeSheet.getSize().maxSize.height;
+        } else {
+          this.width = 800;
+          this.height = 800;
+        }
+
+        // this will set the frame size the maximum allowed by the viz
+        // need to vet whether this will be a problem with automatic vizzes however
+        // see note herein for dashboards as well...
+        // https://onlinehelp.tableau.com/current/api/js_api/en-us/JavaScriptAPI/js_api_sample_resize.html
+        this.viz.setFrameSize(this.width, this.height + 100);
+
+        // add event listeners, have yet to be able to change chord from these though
+        this.viz.addEventListener(window.tableau.TableauEventName.TAB_SWITCH, this.onTabSwitch);
+        this.viz.addEventListener(window.tableau.TableauEventName.FILTER_CHANGE, this.onFilterChange);
+        this.viz.addEventListener(window.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, this.onParameterChange);
+        this.viz.addEventListener(window.tableau.TableauEventName.MARKS_SELECTION, this.onMarkSelect);
+      }
+    };
+
+    // Tableau.Viz was erroring, so went back to window.tableau.Viz
+    this.viz = new window.tableau.Viz(this.container, vizURL, options);
+    this.setState({
+       viz: this.viz
     })
   }
 
