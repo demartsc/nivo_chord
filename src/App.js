@@ -61,7 +61,10 @@ class App extends Component {
     })
   }
 
-  //for testing, may need to be removed
+  componentDidUpdate() {
+    console.log("app updated"); // sanity checking when parent app updates
+  }
+
   initTableau() {
     const vizURL = this.state.url;
     const options = {
@@ -100,10 +103,6 @@ class App extends Component {
     this.setState({
        viz: this.viz
     })
-  }
-
-  componentDidUpdate() {
-    console.log("app updated"); // sanity checking when parent app updates
   }
 
   componentDidMount() {

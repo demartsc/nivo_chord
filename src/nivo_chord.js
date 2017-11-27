@@ -250,8 +250,8 @@ class TableauChord extends Component {
                     "bottom": 60,
                     "left": 60
                 }}
-                height={300}
-                width={300}
+                height={500}
+                width={500}
                 padAngle={0.02}
                 innerRadiusRatio={0.96}
                 innerRadiusOffset={0.02}
