@@ -13,8 +13,7 @@ class App extends Component {
       tab: {}, //for testing, may need to be removed
       filter: {},
       parameter: {},
-      mark: {},
-      data: {}
+      mark: {}
     };
 
     this.initTableau = this.initTableau.bind(this);
@@ -66,11 +65,12 @@ class App extends Component {
 
     // Tableau.Viz was erroring, so went back to window.tableau.Viz
     this.viz = new window.tableau.Viz(this.container, vizURL, options);
-//    this.setState({
-//        viz:this.viz
-//    })
+    this.setState({
+       viz:this.viz
+    })
   }
 
+  // was trying to use these to trigger chord refresh, but not working yet
   onTabSwitch(tabEvent) {
     console.log("made tab it");
     console.log(tabEvent);
@@ -104,7 +104,7 @@ class App extends Component {
   }
 
   componentDidUpdate() {
-    console.log("app updated");
+    console.log("app updated"); // sanity checking when parent app updates
   }
 
   componentDidMount() {
@@ -112,7 +112,6 @@ class App extends Component {
   }
 
   render() {
-    //console.log(window.tableau);
     return (
       <div className="App">
         <div className="tabithaRootDiv">
