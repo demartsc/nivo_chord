@@ -5,7 +5,6 @@
   "homepage": "http://demartsc.github.io/nivo_chord",
   "dependencies": {
     "gh-pages": "^1.0.0",
-    "nivo": "^0.30.0",
     "nivo-generators": "^0.9.3",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",

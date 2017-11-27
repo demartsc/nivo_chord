@@ -60,7 +60,7 @@ class App extends Component {
         this.viz.addEventListener(window.tableau.TableauEventName.TAB_SWITCH, this.onTabSwitch);
         this.viz.addEventListener(window.tableau.TableauEventName.FILTER_CHANGE, this.onFilterChange);
         this.viz.addEventListener(window.tableau.TableauEventName.PARAMETER_VALUE_CHANGE, this.onParameterChange);
-        this.viz.addEventListener(window.tableau.TableauEventName.MARKS_SELECTION, this.onMarkSelect);
+        //this.viz.addEventListener(window.tableau.TableauEventName.MARKS_SELECTION, this.onMarkSelect);
       }
     };
 

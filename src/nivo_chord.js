@@ -13,7 +13,8 @@ class TableauChord extends Component {
       data: {}, 
       chordParms: {},
       keys: null,
-      matrix: null
+      matrix: null, 
+      col_names: []
     };
 
     //this.updateData = this.updateData.bind(this);
@@ -96,9 +97,32 @@ class TableauChord extends Component {
     return matrix;
   }
 
-  handleClick(e) {
-    console.log('Nivo chord was clicked');
-    //console.log(e.target);
+  // this function is made to be a simple demonstration of interacting with tableau from nivo click event
+  handleClick(data, e) {
+    let tempArray = {};
+    //console.log('Nivo chord was clicked');
+    //console.log(data, e.target);
+
+    // check whether it is a ribbon or arc (this could be done better)
+    if ("id" in data) { // arc clicked, just select that value
+      for (var q = 0; q < this.sheets.length; q++) {
+        this.sheets[q].selectMarksAsync(this.state.col_names[0],data.id,"REPLACE");
+        this.sheets[q].selectMarksAsync(this.state.col_names[1],data.id,"ADD");
+      }    
+    } else { // ribbon clicked, we need to target specific here. 
+      // we have to be on a dashboard since we have an html page, loop and select marks
+      // we also know that names 0 and 1 must be the dimensions that we can select
+      tempArray[this.state.col_names[0]] = data.source.id;
+      tempArray[this.state.col_names[1]] = data.target.id;
+      for (q = 0; q < this.sheets.length; q++) {
+        this.sheets[q].selectMarksAsync(tempArray,"REPLACE");
+      }    
+      tempArray[this.state.col_names[0]] = data.target.id;
+      tempArray[this.state.col_names[1]] = data.source.id;
+      for (q = 0; q < this.sheets.length; q++) {
+        this.sheets[q].selectMarksAsync(tempArray,"ADD");
+      }    
+    }
   }
 
   componentDidUpdate() {
@@ -139,7 +163,7 @@ class TableauChord extends Component {
       }
       const options = {
           ignoreAliases: false,
-          ignoreSelection: false,
+          ignoreSelection: true,
           includeAllColumns: false
       };
       sheet.getSummaryDataAsync(options).then((t) => {
@@ -198,7 +222,8 @@ class TableauChord extends Component {
             data: this.data, 
             keys: this.uniqKeys,
             matrix: this.matrix, 
-            chordParms: this.chordParms[activeSheetName]
+            chordParms: this.chordParms[activeSheetName],
+            col_names: col_names
         }); // these error calls do not do anything
       }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
     }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
@@ -212,9 +237,9 @@ class TableauChord extends Component {
       valField, 
       ...restChordProps
     } = this.state.chordParms || {};
-
-    return ( //onMouseOver={this.handleClick} 
-       <div id = "chordDiv" onClick={this.handleClick}>
+    
+    return ( //onMouseOver={this.handleClick} onClick={this.handleClick}
+       <div id = "chordDiv" >
          <Chord
                 id = "id" // this doesn't work :(, if we can get the value added we can use event listeners no prob
                 matrix={this.state.matrix || this.defaultData}
@@ -250,6 +275,7 @@ class TableauChord extends Component {
                 animate={true}
                 motionStiffness={90}
                 motionDamping={7}
+                onClick={(data, event) => this.handleClick(data, event)}
                 {...restChordProps} // this is passed from users and will overwrite above defaults
             />
       </div>
