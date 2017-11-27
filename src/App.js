@@ -16,13 +16,12 @@ class App extends Component {
       mark: {}
     };
 
-    this.initTableau = this.initTableau.bind(this);
-
     this.width = 800; // default, although this gets overwritten in the initTableau function
     this.height = 800; // default, although this gets overwritten in the initTableau function
-
     this.viz = {};
 
+    // bind component functions
+    this.initTableau = this.initTableau.bind(this);
     this.onTabSwitch = this.onTabSwitch.bind(this);
     this.onMarkSelect = this.onMarkSelect.bind(this);
     this.onFilterChange = this.onFilterChange.bind(this);
