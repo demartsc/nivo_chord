@@ -44,6 +44,7 @@ class TableauChord extends Component {
     this.convertRowToObject = this.convertRowToObject.bind(this);
     this.matrixify = this.matrixify.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.pullTableau = this.pullTableau.bind(this);
   }
 
   getColumnIndexes(table, required_keys) {
@@ -125,12 +126,7 @@ class TableauChord extends Component {
     }
   }
 
-  componentDidUpdate() {
-    console.log("updated");
-  }
-
-  componentDidMount() {
-    setTimeout(function() {console.log('delaying half second');}, 500);
+  pullTableau() {
     console.log("mounted");
     this.viz = window.top.tableau.VizManager.getVizs()[0];
     this.workbook = this.viz.getWorkbook();
@@ -227,7 +223,19 @@ class TableauChord extends Component {
             col_names: col_names
         }); // these error calls do not do anything
       }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
-    }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});
+    }, function(err) {return console.error("Error during Tableau Async request:", err._error.message, err._error.stack);});    
+  }
+
+  componentDidUpdate() {
+    console.log("updated");
+  }
+
+  componentDidMount() {
+    var that = this;
+    setTimeout(function() {
+      console.log('delaying half second');
+      that.pullTableau();
+    }, 500);
   }
 
   render() {
