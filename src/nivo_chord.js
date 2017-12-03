@@ -130,6 +130,7 @@ class TableauChord extends Component {
   }
 
   componentDidMount() {
+    setTimeout(function() {console.log('delaying half second');}, 500);
     console.log("mounted");
     this.viz = window.top.tableau.VizManager.getVizs()[0];
     this.workbook = this.viz.getWorkbook();
